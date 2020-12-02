@@ -36,9 +36,7 @@ jobs:
       - name: Build
         run: |
           yarn 
-          yarn test
           yarn build
-          yarn generate:release
 
       - name: Publish
         env:

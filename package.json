@@ -15,10 +15,15 @@
     "start": "ts-node src/index.ts",
     "test": "jest",
     "build": "tsc -p tsconfig.json",
-    "generate:release": "node scripts/release-note.js"
+    "generate:release": "node scripts/release.js",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
+    "chalk": "^4.1.0",
+    "conventional-changelog-cli": "^2.1.1",
+    "enquirer": "^2.3.6",
+    "execa": "^4.1.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.4.3",
     "ts-node": "^9.0.0",
