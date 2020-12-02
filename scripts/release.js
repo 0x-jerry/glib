@@ -63,7 +63,7 @@ async function main() {
 }
 
 async function generateReleaseNote() {
-  const mdContent = ['<!-- Auto generate by `./scripts/release-note.js` -->']
+  const mdContent = ['<!-- Auto generate by `./scripts/release.js` -->']
 
   const changelogPath = path.join(__dirname, '../CHANGELOG.md')
   const oldContent = fs.existsSync(changelogPath) ? fs.readFileSync(changelogPath, { encoding: 'utf-8' }) : ''
