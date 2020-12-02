@@ -14,7 +14,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "jest",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "generate:release": "node scripts/release-note.js"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
