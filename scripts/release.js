@@ -8,10 +8,7 @@ const currentVersion = require('../package.json').version
 
 const versionIncrements = ['patch', 'minor', 'major']
 
-const tags = ['latest', 'next']
-
 const inc = (i) => semver.inc(currentVersion, i)
-const bin = (name) => path.resolve(__dirname, `../node_modules/.bin/${name}`)
 const run = (bin, args, opts = {}) => execa(bin, args, { stdio: 'inherit', ...opts })
 const step = (msg) => console.log(chalk.cyan(msg))
 
@@ -42,25 +39,6 @@ async function main() {
     throw new Error(`Invalid target version: ${targetVersion}`)
   }
 
-  const { tag } = await prompt({
-    type: 'select',
-    name: 'tag',
-    message: 'Select tag type',
-    choices: tags
-  })
-
-  console.log(tag)
-
-  const { yes: tagOk } = await prompt({
-    type: 'confirm',
-    name: 'yes',
-    message: `Releasing v${targetVersion} with the "${tag}" tag. Confirm?`
-  })
-
-  if (!tagOk) {
-    return
-  }
-
   // Update the package version.
   step('\nUpdating the package version...')
   updatePackage(targetVersion)
@@ -73,15 +51,15 @@ async function main() {
   await generateReleaseNote()
 
   // Commit changes to the Git.
-  // step('\nCommitting changes...')
-  // await run('git', ['add', '-A'])
-  // await run('git', ['commit', '-m', `release: v${targetVersion}`])
+  step('\nCommitting changes...')
+  await run('git', ['add', '-A'])
+  await run('git', ['commit', '-m', `release: v${targetVersion}`])
 
   // Push to GitHub.
-  // step('\nPushing to GitHub...')
-  // await run('git', ['tag', `v${targetVersion}`])
-  // await run('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
-  // await run('git', ['push'])
+  step('\nPushing to GitHub...')
+  await run('git', ['tag', `v${targetVersion}`])
+  await run('git', ['push', 'origin', `refs/tags/v${targetVersion}`])
+  await run('git', ['push'])
 }
 
 async function generateReleaseNote() {
@@ -99,7 +77,7 @@ async function generateReleaseNote() {
   mdContent.push(newContent.slice(0, newContent.length - oldContent.length).trim())
 
   const releaseNotePath = path.join(__dirname, '../release-note.md')
-  fs.writeFileSync(releaseNotePath)
+  fs.writeFileSync(releaseNotePath, mdContent.join('\n'), { encoding: 'utf-8' })
 }
 
 function updatePackage(version) {
