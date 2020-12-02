@@ -1,13 +1,16 @@
 {
-  "name": "bison",
+  "name": "@exyz/glib",
   "version": "1.0.0",
   "main": "dist/index.js",
-  "repository": "https://github.com/cwxyz007/Bison.git",
+  "repository": "https://github.com/cwxyz007/glib.git",
   "author": "Gem Xli <x.li.gem@gmail.com>",
   "license": "MIT",
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "jest",
