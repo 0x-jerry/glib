@@ -8,28 +8,34 @@
   "files": [
     "dist"
   ],
+  "bin": {
+    "glib": "bin/glib.js"
+  },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "jest",
-    "build": "tsc -p tsconfig.json",
-    "release": "node scripts/release.js",
+    "build": "tsc -p tsconfig.build.json",
+    "release": "ts-node src/cli/index.ts release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
+  },
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^6.2.1",
+    "enquirer": "^2.3.6",
+    "execa": "^5.0.0",
+    "lru-cache": "^6.0.0",
+    "semver": "^7.3.4"
   },
   "devDependencies": {
     "@types/lru-cache": "^5.1.0",
-    "chalk": "^4.1.0",
+    "@types/semver": "^7.3.4",
     "conventional-changelog-cli": "^2.1.1",
-    "enquirer": "^2.3.6",
-    "execa": "^4.1.0",
     "jest": "^26.6.3",
     "ts-jest": "^26.4.3",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
-  },
-  "dependencies": {
-    "lru-cache": "^6.0.0"
   }
 }
