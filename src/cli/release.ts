@@ -17,13 +17,16 @@ const inc = (i: semver.ReleaseType) => semver.inc(currentVersion, i)
 const run = (bin: string, args: string[], opts: execa.Options = {}) => execa(bin, args, { stdio: 'inherit', ...opts })
 const info = (msg: string) => console.log(chalk.cyan(msg))
 
-interface ReleaseStepOption {
+interface ReleaseStepContext {
   version: string
   pkg: any
+  hasScript(name: string): boolean
+  info(msg: string): void
+  run: typeof run
 }
 
 interface ReleaseStep {
-  (opt: ReleaseStepOption): Promise<void> | void
+  (ctx: ReleaseStepContext): Promise<void> | void
 }
 
 const updateVersion: ReleaseStep = (opt) => {
@@ -37,19 +40,15 @@ const updateVersion: ReleaseStep = (opt) => {
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 }
 
-const build: ReleaseStep = async (opt) => {
-  if (!opt.pkg.scripts?.build) {
-    return
-  }
+const build: ReleaseStep = async (ctx) => {
+  if (!ctx.hasScript('build')) return
 
   info('\nBuilding the package...')
   await run('yarn', ['build'])
 }
 
-const generateReleaseNote: ReleaseStep = async (opt) => {
-  if (!opt.pkg.scripts?.changelog) {
-    return
-  }
+const generateReleaseNote: ReleaseStep = async (ctx) => {
+  if (!ctx.hasScript('changelog')) return
 
   info('\nGenerate release note...')
   const mdContent = ['<!-- Auto generate by `./scripts/release.js` -->']
@@ -68,23 +67,21 @@ const generateReleaseNote: ReleaseStep = async (opt) => {
   fs.writeFileSync(releaseNotePath, mdContent.join('\n'), { encoding: 'utf-8' })
 }
 
-const commit: ReleaseStep = async (opt) => {
+const commit: ReleaseStep = async (ctx) => {
   info('\nCommitting changes...')
   await run('git', ['add', '-A'])
-  await run('git', ['commit', '-m', `release: v${opt.version}`])
+  await run('git', ['commit', '-m', `release: v${ctx.version}`])
 }
 
-const push: ReleaseStep = async (opt) => {
+const push: ReleaseStep = async (ctx) => {
   info('\nPushing to GitHub...')
-  await run('git', ['tag', `v${opt.version}`])
-  await run('git', ['push', 'origin', `refs/tags/v${opt.version}`])
+  await run('git', ['tag', `v${ctx.version}`])
+  await run('git', ['push', 'origin', `refs/tags/v${ctx.version}`])
   await run('git', ['push'])
 }
 
-const test: ReleaseStep = async (opt) => {
-  if (!opt.pkg.scripts?.test) {
-    return
-  }
+const test: ReleaseStep = async (ctx) => {
+  if (!ctx.hasScript('test')) return
 
   info('\nTesting...')
   await run('yarn', ['test'])
@@ -117,14 +114,19 @@ export async function release(option: Partial<ReleaseOption> = {}) {
     option.afterDone
   ]
 
-  const stepOpt: ReleaseStepOption = {
+  const stepCtx: ReleaseStepContext = {
     version: targetVersion,
-    pkg: pkgJson
+    pkg: pkgJson,
+    hasScript(scriptName: string) {
+      return !!pkgJson.scripts?.[scriptName]
+    },
+    info,
+    run
   }
 
   for (const step of steps) {
     if (step) {
-      await step(stepOpt)
+      await step(stepCtx)
     }
   }
 }

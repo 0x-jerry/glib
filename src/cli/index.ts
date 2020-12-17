@@ -4,8 +4,8 @@ import fs from 'fs'
 import { release, ReleaseOption } from './release'
 import { fsRequest } from './utils'
 
-interface UserOption {
-  release: ReleaseOption
+export interface UserOption {
+  release?: ReleaseOption
 }
 
 const program = commander
