@@ -81,6 +81,15 @@ const push: ReleaseStep = async (opt) => {
   await run('git', ['push'])
 }
 
+const test: ReleaseStep = async (opt) => {
+  if (!opt.pkg.scripts?.test) {
+    return
+  }
+
+  info('\nTesting...')
+  await run('yarn', ['test'])
+}
+
 export interface ReleaseOption {
   beforeBuild: ReleaseStep
   afterBuild: ReleaseStep
@@ -99,6 +108,7 @@ export async function release(option: Partial<ReleaseOption> = {}) {
 
   const steps: (ReleaseStep | undefined)[] = [
     updateVersion,
+    test,
     option.beforeBuild,
     build,
     option.afterBuild,
