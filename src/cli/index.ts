@@ -31,7 +31,7 @@ function actionWrapper(func: Function, key: keyof UserOption) {
 function getConfig() {
   const cwd = process.cwd()
   const confPath = path.join(cwd, 'glib.config.js')
-  if (fs.existsSync(confPath)) {
+  if (!fs.existsSync(confPath)) {
     return {}
   }
 

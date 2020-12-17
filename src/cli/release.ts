@@ -5,7 +5,11 @@ import semver from 'semver'
 import { prompt } from 'enquirer'
 import execa from 'execa'
 import { getPackage } from './utils'
-const currentVersion = require('../package.json').version
+
+const cwd = process.cwd()
+
+const pkgJson = getPackage()
+const currentVersion = pkgJson.version
 
 const versionIncrements: semver.ReleaseType[] = ['patch', 'minor', 'major']
 
@@ -25,7 +29,7 @@ interface ReleaseStep {
 const updateVersion: ReleaseStep = (opt) => {
   info('\nUpdating the package version...')
 
-  const pkgPath = path.resolve(path.resolve(__dirname, '..'), 'package.json')
+  const pkgPath = path.join(cwd, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
   pkg.version = opt.version
@@ -50,7 +54,7 @@ const generateReleaseNote: ReleaseStep = async (opt) => {
   info('\nGenerate release note...')
   const mdContent = ['<!-- Auto generate by `./scripts/release.js` -->']
 
-  const changelogPath = path.join(process.cwd(), 'CHANGELOG.md')
+  const changelogPath = path.join(cwd, 'CHANGELOG.md')
   const oldContent = fs.existsSync(changelogPath) ? fs.readFileSync(changelogPath, { encoding: 'utf-8' }) : ''
 
   // Generate the changelog.
@@ -60,7 +64,7 @@ const generateReleaseNote: ReleaseStep = async (opt) => {
 
   mdContent.push(newContent.slice(0, newContent.length - oldContent.length).trim())
 
-  const releaseNotePath = path.join(process.cwd(), 'release-note.md')
+  const releaseNotePath = path.join(cwd, 'release-note.md')
   fs.writeFileSync(releaseNotePath, mdContent.join('\n'), { encoding: 'utf-8' })
 }
 
@@ -84,8 +88,6 @@ export interface ReleaseOption {
 }
 
 export async function release(option: Partial<ReleaseOption> = {}) {
-  const pkg = getPackage()
-
   option = Object.assign(
     {
       afterBuild: generateReleaseNote
@@ -107,7 +109,7 @@ export async function release(option: Partial<ReleaseOption> = {}) {
 
   const stepOpt: ReleaseStepOption = {
     version: targetVersion,
-    pkg
+    pkg: pkgJson
   }
 
   for (const step of steps) {
