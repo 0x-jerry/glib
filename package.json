@@ -1,6 +1,6 @@
 {
   "name": "@exyz/glib",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "dist/index.js",
   "repository": "https://github.com/cwxyz007/glib.git",
   "author": "Gem Xli <x.li.gem@gmail.com>",
