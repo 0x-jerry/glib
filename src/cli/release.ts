@@ -5,6 +5,7 @@ import semver from 'semver'
 import { prompt } from 'enquirer'
 import execa from 'execa'
 import { getPackage } from './utils'
+import { noop } from '../utils'
 
 const cwd = process.cwd()
 
@@ -87,28 +88,42 @@ const test: ReleaseStep = async (ctx) => {
   await run('yarn', ['test'])
 }
 
+export interface StepOption {
+  test: boolean
+  build: boolean
+  changelog: boolean
+}
+
 export interface ReleaseOption {
   beforeBuild: ReleaseStep
   afterBuild: ReleaseStep
   afterDone: ReleaseStep
+  steps: Partial<StepOption>
 }
 
 export async function release(option: Partial<ReleaseOption> = {}) {
-  option = Object.assign(
-    {
-      afterBuild: generateReleaseNote
-    },
-    option
-  )
-
   const targetVersion: string = await promptReleaseVersion()
 
-  const steps: (ReleaseStep | undefined)[] = [
+  const defaultOption: ReleaseOption = {
+    beforeBuild: noop,
+    afterBuild: noop,
+    afterDone: noop,
+    steps: {
+      test: true,
+      build: true,
+      changelog: true
+    }
+  }
+
+  const { steps } = (option = Object.assign(defaultOption, option))
+
+  const stepActions: (ReleaseStep | undefined | false)[] = [
     updateVersion,
-    test,
+    steps.test && test,
     option.beforeBuild,
-    build,
+    steps.build && build,
     option.afterBuild,
+    steps.changelog && generateReleaseNote,
     commit,
     push,
     option.afterDone
@@ -124,7 +139,7 @@ export async function release(option: Partial<ReleaseOption> = {}) {
     run
   }
 
-  for (const step of steps) {
+  for (const step of stepActions) {
     if (step) {
       await step(stepCtx)
     }
