@@ -42,6 +42,7 @@ jobs:
 
       - name: Publish
         env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           yarn publish --non-interactive

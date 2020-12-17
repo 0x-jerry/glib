@@ -1,3 +1,7 @@
+## [0.2.7](https://github.com/cwxyz007/glib/compare/v0.2.6...v0.2.7) (2020-12-17)
+
+
+
 ## [0.2.6](https://github.com/cwxyz007/glib/compare/v0.2.5...v0.2.6) (2020-12-17)
 
 
