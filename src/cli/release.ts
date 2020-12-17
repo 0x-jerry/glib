@@ -5,7 +5,7 @@ import semver from 'semver'
 import { prompt } from 'enquirer'
 import execa from 'execa'
 import { getPackage } from './utils'
-import { noop } from '../utils'
+import { mergeDeep, noop } from '../utils'
 
 const cwd = process.cwd()
 
@@ -101,7 +101,7 @@ export interface ReleaseOption {
   steps: Partial<StepOption>
 }
 
-export async function release(option: Partial<ReleaseOption> = {}) {
+export async function release(opt: Partial<ReleaseOption> = {}) {
   const targetVersion: string = await promptReleaseVersion()
 
   const defaultOption: ReleaseOption = {
@@ -115,7 +115,8 @@ export async function release(option: Partial<ReleaseOption> = {}) {
     }
   }
 
-  const { steps } = (option = Object.assign(defaultOption, option))
+  const option = mergeDeep(defaultOption, opt)
+  const { steps } = option
 
   const stepActions: (ReleaseStep | undefined | false)[] = [
     updateVersion,
