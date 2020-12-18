@@ -6,7 +6,8 @@
   "author": "Gem Xli <x.li.gem@gmail.com>",
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
   "bin": {
     "glib": "bin/glib.js"
