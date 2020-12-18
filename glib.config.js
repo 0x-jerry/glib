@@ -4,7 +4,8 @@
 const conf = {
   release: {
     steps: {
-      test: false
+      test: false,
+      build: false
     }
   }
 }
