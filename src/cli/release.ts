@@ -1,42 +1,33 @@
 import fs from 'fs'
 import path from 'path'
-import chalk from 'chalk'
 import semver from 'semver'
 import { prompt } from 'enquirer'
-import execa from 'execa'
-import { getPackage } from './utils'
 import { mergeDeep, noop } from '../utils'
+import { CliContext, cliCtx } from './ctx'
 
 const cwd = process.cwd()
 
-const pkgJson = getPackage()
-const currentVersion = pkgJson.version
+const currentVersion = cliCtx.pkg.version
 
 const versionIncrements: semver.ReleaseType[] = ['patch', 'minor', 'major']
 
 const inc = (i: semver.ReleaseType) => semver.inc(currentVersion, i)
-const run = (bin: string, args: string[], opts: execa.Options = {}) => execa(bin, args, { stdio: 'inherit', ...opts })
-const info = (msg: string) => console.log(chalk.cyan(msg))
 
-interface ReleaseStepContext {
+interface ReleaseStepContext extends CliContext {
   version: string
-  pkg: any
-  hasScript(name: string): boolean
-  info(msg: string): void
-  run: typeof run
 }
 
 interface ReleaseStep {
   (ctx: ReleaseStepContext): Promise<void> | void
 }
 
-const updateVersion: ReleaseStep = (opt) => {
-  info('\nUpdating the package version...')
+const updateVersion: ReleaseStep = (ctx) => {
+  ctx.info('\nUpdating the package version...')
 
   const pkgPath = path.join(cwd, 'package.json')
   const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'))
 
-  pkg.version = opt.version
+  pkg.version = ctx.version
 
   fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2) + '\n')
 }
@@ -44,21 +35,21 @@ const updateVersion: ReleaseStep = (opt) => {
 const build: ReleaseStep = async (ctx) => {
   if (!ctx.hasScript('build')) return
 
-  info('\nBuilding the package...')
-  await run('yarn', ['build'])
+  ctx.info('\nBuilding the package...')
+  await ctx.run('yarn', ['build'])
 }
 
 const generateReleaseNote: ReleaseStep = async (ctx) => {
   if (!ctx.hasScript('changelog')) return
 
-  info('\nGenerate release note...')
+  ctx.info('\nGenerate release note...')
   const mdContent = ['<!-- Auto generate by `./scripts/release.js` -->']
 
   const changelogPath = path.join(cwd, 'CHANGELOG.md')
   const oldContent = fs.existsSync(changelogPath) ? fs.readFileSync(changelogPath, { encoding: 'utf-8' }) : ''
 
   // Generate the changelog.
-  await run('yarn', ['changelog'])
+  await ctx.run('yarn', ['changelog'])
 
   const newContent = fs.readFileSync(changelogPath, { encoding: 'utf-8' })
 
@@ -69,23 +60,23 @@ const generateReleaseNote: ReleaseStep = async (ctx) => {
 }
 
 const commit: ReleaseStep = async (ctx) => {
-  info('\nCommitting changes...')
-  await run('git', ['add', '-A'])
-  await run('git', ['commit', '-m', `release: v${ctx.version}`])
+  ctx.info('\nCommitting changes...')
+  await ctx.run('git', ['add', '-A'])
+  await ctx.run('git', ['commit', '-m', `release: v${ctx.version}`])
 }
 
 const push: ReleaseStep = async (ctx) => {
-  info('\nPushing to GitHub...')
-  await run('git', ['tag', `v${ctx.version}`])
-  await run('git', ['push', 'origin', `refs/tags/v${ctx.version}`])
-  await run('git', ['push'])
+  ctx.info('\nPushing to GitHub...')
+  await ctx.run('git', ['tag', `v${ctx.version}`])
+  await ctx.run('git', ['push', 'origin', `refs/tags/v${ctx.version}`])
+  await ctx.run('git', ['push'])
 }
 
 const test: ReleaseStep = async (ctx) => {
   if (!ctx.hasScript('test')) return
 
-  info('\nTesting...')
-  await run('yarn', ['test'])
+  ctx.info('\nTesting...')
+  await ctx.run('yarn', ['test'])
 }
 
 export interface StepOption {
@@ -119,11 +110,11 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
   const { steps } = option
 
   const stepActions: (ReleaseStep | undefined | false)[] = [
-    updateVersion,
     steps.test && test,
     option.beforeBuild,
     steps.build && build,
     option.afterBuild,
+    updateVersion,
     steps.changelog && generateReleaseNote,
     commit,
     push,
@@ -131,13 +122,8 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
   ]
 
   const stepCtx: ReleaseStepContext = {
-    version: targetVersion,
-    pkg: pkgJson,
-    hasScript(scriptName: string) {
-      return !!pkgJson.scripts?.[scriptName]
-    },
-    info,
-    run
+    ...cliCtx,
+    version: targetVersion
   }
 
   for (const step of stepActions) {
