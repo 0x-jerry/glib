@@ -2,6 +2,7 @@
   "name": "@exyz/glib",
   "version": "0.3.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "repository": "https://github.com/cwxyz007/glib.git",
   "author": "Gem Xli <x.li.gem@gmail.com>",
   "license": "MIT",
