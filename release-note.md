@@ -1,7 +1,7 @@
 <!-- Auto generate by `./scripts/release.js` -->
-## [0.3.2](https://github.com/cwxyz007/glib/compare/v0.3.1...v0.3.2) (2020-12-19)
+## [0.3.3](https://github.com/cwxyz007/glib/compare/v0.3.2...v0.3.3) (2020-12-19)
 
 
-### Performance Improvements
+### Bug Fixes
 
-* 暴露 Cli 相关类型声明 ([a36b876](https://github.com/cwxyz007/glib/commit/a36b876491c8deb991f0cff2230e2238c8ae2234))
+* 修复打包格式 ([8807b6a](https://github.com/cwxyz007/glib/commit/8807b6a4e9f19d26bd3bbfed949a81584771993f))
