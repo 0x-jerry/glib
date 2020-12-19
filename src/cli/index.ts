@@ -18,6 +18,7 @@ program
   .version(version())
   // release
   .command('release')
+  .description('Release a new version.')
   .action(actionWrapper(release, 'release'))
 
 program.parse(process.argv)
