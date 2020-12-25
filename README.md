@@ -25,7 +25,8 @@ const conf = {
   release: {
     async afterDone(ctx) {
       ctx.info('Publishing to npm...')
-      await ctx.run('yarn', ['publish', '--new-version', ctx.version])
+      // Do something
+      await ctx.run('cmd', ['param'])
     }
   }
 }
@@ -43,4 +44,5 @@ module.exports = conf
 6. changelog: 检测并执行 package.json 中的 changelog 脚本
 7. commit: 提交 commit
 8. push: 推送到远程 Github
-9. afterDone: 检测并执行 配置文件中的 beforeDone 脚本
+9. publishToNpm: 执行 `yarn publish --new-version ${version}`，默认跳过这个步骤
+10. afterDone: 检测并执行 配置文件中的 beforeDone 脚本
