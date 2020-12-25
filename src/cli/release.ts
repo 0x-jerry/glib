@@ -79,10 +79,32 @@ const test: ReleaseStep = async (ctx) => {
   await ctx.run('yarn', ['test'])
 }
 
+const publishToNpm: ReleaseStep = async (ctx) => {
+  ctx.info('\nPublishing to npm...')
+  await ctx.run('yarn', ['publish', '--new-version', ctx.version])
+}
+
 export interface StepOption {
+  /**
+   * 是否执行 `yarn test`
+   * @default true
+   */
   test: boolean
+  /**
+   * 是否执行 `yarn build`
+   * @default true
+   */
   build: boolean
+  /**
+   * 是否执行 `yarn changelog`
+   * @default true
+   */
   changelog: boolean
+  /**
+   * 是否执行 `yarn publish --new-version ${version}`
+   * @default false
+   */
+  publish: boolean
 }
 
 export interface ReleaseOption {
@@ -102,7 +124,8 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
     steps: {
       test: true,
       build: true,
-      changelog: true
+      changelog: true,
+      publish: false
     }
   }
 
@@ -118,6 +141,7 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
     steps.changelog && generateReleaseNote,
     commit,
     push,
+    steps.publish && publishToNpm,
     option.afterDone
   ]
 
