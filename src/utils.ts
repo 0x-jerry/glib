@@ -41,3 +41,27 @@ export function mergeDeep<T extends {}>(A: T, B: DeepPartial<T>): T {
 
   return A
 }
+
+export const isFunction = (o: any): o is Function => typeof o === 'function'
+
+export function x<T>(o: T) {
+  return new Flow(o)
+}
+
+export class Flow<T> {
+  value: T
+
+  constructor(o: T) {
+    this.value = o
+  }
+
+  next<F>(f: (s: T) => F) {
+    return new Flow(f(this.value))
+  }
+
+  done(): T
+  done<F>(f: (s: T) => F): F
+  done<F>(f?: (s: T) => F) {
+    return f ? f(this.value) : this.value
+  }
+}

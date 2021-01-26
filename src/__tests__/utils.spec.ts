@@ -1,4 +1,4 @@
-import { mergeDeep } from '../utils'
+import { mergeDeep, x } from '../utils'
 
 describe('deep merge', () => {
   it('plain object', () => {
@@ -29,5 +29,16 @@ describe('deep merge', () => {
         a: 10
       }
     })
+  })
+
+  it('x', () => {
+    const percentage = (s: number) =>
+      x(s)
+        .next((s) => s.toString())
+        .next((s) => s.padStart(2))
+        .next((s) => s + '%')
+        .done()
+
+    expect(percentage(10)).toBe('10%')
   })
 })
