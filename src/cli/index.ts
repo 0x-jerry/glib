@@ -38,3 +38,5 @@ function getConfig() {
 
   return require(confPath)
 }
+
+export const defineConfig = (option: UserOption) => option
