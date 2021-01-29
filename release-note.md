@@ -1,7 +1,12 @@
 <!-- Auto generate by `./scripts/release.js` -->
-## [0.3.4](https://github.com/cwxyz007/glib/compare/v0.3.3...v0.3.4) (2020-12-25)
+## [0.3.5](https://github.com/cwxyz007/glib/compare/v0.3.4...v0.3.5) (2021-01-29)
 
 
 ### Features
 
-* 增加 publish to npm 步骤，并默认关闭 ([322a0c2](https://github.com/cwxyz007/glib/commit/322a0c21a20cf203275b11dccab528c1d5657e57))
+* 添加  Flow & RuleExecutor ([19842e0](https://github.com/cwxyz007/glib/commit/19842e0719585743215dd94bf48b4d8e16ac4285))
+
+
+### Performance Improvements
+
+* 提供 defineConfig API ([0d19f54](https://github.com/cwxyz007/glib/commit/0d19f54c328ac276257bda0040a48f150ba65df2))
