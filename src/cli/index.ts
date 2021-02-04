@@ -38,7 +38,3 @@ function getConfig() {
 
   return require(confPath)
 }
-
-export function defineConfig(option: UserOption) {
-  return option
-}
