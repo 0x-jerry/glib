@@ -62,7 +62,7 @@ const generateReleaseNote: ReleaseStep = async (ctx) => {
 const commit: ReleaseStep = async (ctx) => {
   ctx.info('\nCommitting changes...')
   await ctx.run('git', ['add', '-A'])
-  await ctx.run('git', ['commit', '-m', `release: v${ctx.version}`])
+  await ctx.run('git', ['commit', '-m', `chore: release v${ctx.version}`])
 }
 
 const push: ReleaseStep = async (ctx) => {
