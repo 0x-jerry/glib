@@ -2,16 +2,14 @@ import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
 import { prompt } from 'enquirer'
-import { mergeDeep, noop } from '../utils'
+import { mergeDeep, noop } from './utils'
 import { CliContext, cliCtx } from './ctx'
 
 const cwd = process.cwd()
 
 const currentVersion = cliCtx.pkg.version
 
-const versionIncrements: semver.ReleaseType[] = ['patch', 'minor', 'major']
-
-const inc = (i: semver.ReleaseType) => semver.inc(currentVersion, i)
+const inc = (i: semver.ReleaseType, identifier?: string) => semver.inc(currentVersion, i, identifier)!
 
 interface ReleaseStepContext extends CliContext {
   version: string
@@ -114,9 +112,13 @@ export interface ReleaseOption {
   steps: Partial<StepOption>
 }
 
-export async function release(opt: Partial<ReleaseOption> = {}) {
-  const targetVersion: string = await promptReleaseVersion()
+interface ReleaseCmdParams {
+  prerelease: boolean
+  beta: boolean
+  alpha: boolean
+}
 
+export async function release(opt: Partial<ReleaseOption> = {}, param: Partial<ReleaseCmdParams> = {}) {
   const defaultOption: ReleaseOption = {
     beforeBuild: noop,
     afterBuild: noop,
@@ -129,7 +131,21 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
     }
   }
 
+  const defaultParams: ReleaseCmdParams = {
+    prerelease: false,
+    beta: false,
+    alpha: false
+  }
+
+  const params = mergeDeep(defaultParams, param)
+
   const option = mergeDeep(defaultOption, opt)
+
+  const versionIdentifier = params.beta ? 'beta' : params.alpha ? 'alpha' : ''
+  const isPrerelease = params.beta || params.alpha || params.prerelease
+
+  const targetVersion: string = await promptReleaseVersion(isPrerelease, versionIdentifier)
+
   const { steps } = option
 
   const stepActions: (ReleaseStep | undefined | false)[] = [
@@ -157,14 +173,23 @@ export async function release(opt: Partial<ReleaseOption> = {}) {
   }
 }
 
-async function promptReleaseVersion() {
+async function promptReleaseVersion(isPrerelease: boolean, identifier?: string) {
   let targetVersion: string = ''
+
+  const normalReleaseType: semver.ReleaseType[] = ['patch', 'minor', 'major']
+  const prereleaseType: semver.ReleaseType[] = ['prepatch', 'preminor', 'premajor']
+
+  const releaseTypes = isPrerelease ? prereleaseType : normalReleaseType
+
+  const versions = releaseTypes.map((i) => inc(i, identifier)).concat(['custom'])
+
+  const formatVersionChoice = (v: string, idx: number) => `${idx} (${v})`
 
   const opt: { release: string } = await prompt({
     type: 'select',
     name: 'release',
     message: 'Select release type',
-    choices: versionIncrements.map((i) => `${i} (${inc(i)})`).concat(['custom'])
+    choices: versions.map((v, i) => (i === versions.length - 1 ? v : formatVersionChoice(v, i)))
   })
 
   if (opt.release === 'custom') {

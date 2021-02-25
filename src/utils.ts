@@ -1,25 +1,23 @@
-import LRU from 'lru-cache'
+import path from 'path'
+import fs from 'fs'
 
-export const noop = () => {}
+export function getPackage() {
+  const cwd = process.cwd()
+  const pkgPath = path.join(cwd, 'package.json')
 
-export const cached = <T extends (arg?: any) => any>(func: T): T => {
-  const cache = new LRU(100)
-
-  // @ts-ignore
-  return function (this: ThisType, arg: any) {
-    if (cache.has(arg)) {
-      return cache.get(arg)
-    }
-
-    const r = func.apply(this, arg)
-    cache.set(arg, r)
-
-    return r
+  try {
+    return fsRequest(pkgPath)
+  } catch (error) {
+    throw new Error('Can not find package.json in: ' + cwd)
   }
 }
 
-export function isObject(t: unknown): t is Object {
-  return typeof t === 'object' && t !== null
+export function fsRequest(filePath: string) {
+  if (!fs.existsSync(filePath)) {
+    throw new Error('Can not find file: ' + filePath)
+  }
+
+  return require(filePath)
 }
 
 export type DeepPartial<T> = {
@@ -42,26 +40,8 @@ export function mergeDeep<T extends {}>(A: T, B: DeepPartial<T>): T {
   return A
 }
 
-export const isFunction = (o: any): o is Function => typeof o === 'function'
-
-export function x<T>(o: T) {
-  return new Flow(o)
+export function isObject(t: unknown): t is Object {
+  return typeof t === 'object' && t !== null
 }
 
-export class Flow<T> {
-  value: T
-
-  constructor(o: T) {
-    this.value = o
-  }
-
-  next<F>(f: (s: T) => F) {
-    return new Flow(f(this.value))
-  }
-
-  done(): T
-  done<F>(f: (s: T) => F): F
-  done<F>(f?: (s: T) => F) {
-    return f ? f(this.value) : this.value
-  }
-}
+export const noop = () => {}
