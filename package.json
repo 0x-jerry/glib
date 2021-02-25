@@ -17,10 +17,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "ts-node src/cmd.ts",
     "test": "jest",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "release": "ts-node src/cli/index.ts release",
+    "release": "yarn start release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s"
   },
   "dependencies": {

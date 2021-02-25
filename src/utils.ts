@@ -45,3 +45,13 @@ export function isObject(t: unknown): t is Object {
 }
 
 export const noop = () => {}
+
+export function getConfig() {
+  const cwd = process.cwd()
+  const confPath = path.join(cwd, 'glib.config.js')
+  if (!fs.existsSync(confPath)) {
+    return {}
+  }
+
+  return require(confPath)
+}
