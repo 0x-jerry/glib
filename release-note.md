@@ -1,7 +1,7 @@
 <!-- Auto generate by `./scripts/release.js` -->
-## [0.3.7](https://github.com/cwxyz007/glib/compare/v0.3.6...v0.3.7) (2021-02-04)
+# [0.4.0](https://github.com/cwxyz007/glib/compare/v0.3.7...v0.4.0) (2021-02-25)
 
 
-### Bug Fixes
+### Features
 
-* defineConfig 导出错误 ([e2f16b6](https://github.com/cwxyz007/glib/commit/e2f16b6d507cdc9c0f15fb3d238edbd4dbab9187))
+* 仅保留命令功能 ([409b1a3](https://github.com/cwxyz007/glib/commit/409b1a3020274b8a97c368693333bfa601a811dd))
