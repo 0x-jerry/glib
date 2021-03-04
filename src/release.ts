@@ -146,6 +146,9 @@ export async function release(opt: Partial<ReleaseOption> = {}, param: Partial<R
 
   const targetVersion: string = await promptReleaseVersion(isPrerelease, versionIdentifier)
 
+  // for script
+  process.env.GLIB_NEXT_VERSION = targetVersion
+
   const { steps } = option
 
   const stepActions: (ReleaseStep | undefined | false)[] = [
