@@ -1,7 +1,7 @@
 <!-- Auto generate by `./scripts/release.js` -->
-## [0.4.1](https://github.com/cwxyz007/glib/compare/v0.4.0...v0.4.1) (2021-02-25)
+## [0.4.2](https://github.com/cwxyz007/glib/compare/v0.4.1...v0.4.2) (2021-03-04)
 
 
-### Bug Fixes
+### Features
 
-* 修复 defineConfig ([1874cd5](https://github.com/cwxyz007/glib/commit/1874cd5a3b4a7c82825794eec1c635eed415a9bf))
+* add GLIB_NEXT_VERSION env variable ([ec01e49](https://github.com/cwxyz007/glib/commit/ec01e49088b223ad5c1a9541f8d0b6520ae601a6))
