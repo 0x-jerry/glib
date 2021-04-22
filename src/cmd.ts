@@ -2,8 +2,11 @@ import commander from 'commander'
 import path from 'path'
 import { release, ReleaseOption } from './release'
 import { fsRequest, getConfig } from './utils'
+import { register } from 'ts-node'
 
-export interface UserOption {
+register()
+
+export type UserOption = {
   release?: ReleaseOption
 }
 

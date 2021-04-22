@@ -180,7 +180,7 @@ async function promptReleaseVersion(isPrerelease: boolean, identifier?: string) 
   let targetVersion: string = ''
 
   const normalReleaseType: semver.ReleaseType[] = ['patch', 'minor', 'major']
-  const prereleaseType: semver.ReleaseType[] = ['prepatch', 'preminor', 'premajor']
+  const prereleaseType: semver.ReleaseType[] = ['prerelease', 'prepatch', 'preminor', 'premajor']
 
   const releaseTypes = isPrerelease ? prereleaseType : normalReleaseType
 
