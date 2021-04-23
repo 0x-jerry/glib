@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import semver from 'semver'
 import { prompt } from 'enquirer'
-import { mergeDeep, noop } from './utils'
+import { deduplicate, mergeDeep, noop } from './utils'
 import { CliContext, cliCtx } from './ctx'
 
 const cwd = process.cwd()
@@ -184,7 +184,7 @@ async function promptReleaseVersion(isPrerelease: boolean, identifier?: string) 
 
   const releaseTypes = isPrerelease ? prereleaseType : normalReleaseType
 
-  const versions = releaseTypes.map((i) => inc(i, identifier)).concat(['custom'])
+  const versions = deduplicate(releaseTypes.map((i) => inc(i, identifier))).concat(['custom'])
 
   const formatVersionChoice = (v: string, idx: number) => `${idx} (${v})`
 

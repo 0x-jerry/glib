@@ -70,3 +70,7 @@ export function getConfig() {
 
   return o && (o.default || o)
 }
+
+export function deduplicate<T>(arr: T[]) {
+  return [...new Set(arr)]
+}
