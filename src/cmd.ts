@@ -4,7 +4,10 @@ import { release, ReleaseOption } from './release'
 import { fsRequest, getConfig } from './utils'
 import { register } from 'ts-node'
 
-register()
+register({
+  // disable type check
+  transpileOnly: true
+})
 
 export type UserOption = {
   release?: ReleaseOption
