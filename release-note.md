@@ -1,8 +1,12 @@
 <!-- Auto generate by `./scripts/release.js` -->
-## [0.4.3](https://github.com/cwxyz007/glib/compare/v0.4.1...v0.4.3) (2021-04-22)
+## [0.4.4](https://github.com/cwxyz007/glib/compare/v0.4.3...v0.4.4) (2021-04-23)
 
 
-### Features
+### Bug Fixes
 
-* add GLIB_NEXT_VERSION env variable ([ec01e49](https://github.com/cwxyz007/glib/commit/ec01e49088b223ad5c1a9541f8d0b6520ae601a6))
-* 支持 .ts 配置文件 ([58304d6](https://github.com/cwxyz007/glib/commit/58304d63cbe1fc94330c9e8403dd959f28891e8c))
+* prerelease 增加版本错误 ([414c2f4](https://github.com/cwxyz007/glib/commit/414c2f4a25e92f538b8d16c07e29af8483db75ef))
+
+
+### Performance Improvements
+
+* 关闭 ts 类型检测 ([5d6c88c](https://github.com/cwxyz007/glib/commit/5d6c88c5431b2968791e76be7fdbfdec2f9d17dd))
