@@ -2,7 +2,7 @@
 
 一些常用函数，还有一些常用命令行工具
 
-## 安装 
+## 安装
 
 ```sh
 yarn add @exyz/glib
@@ -37,12 +37,12 @@ module.exports = conf
 执行顺序：
 
 1. test: 检测并执行 package.json 的 test 命令
-2. beforeBuild: 检测并执行 配置文件中的 beforeBuild 脚本
+2. beforeBuild: 检测并执行 配置文件 `glib.config.js` 中的 beforeBuild 脚本
 3. build: 检测并执行 package.json 中的 build 脚本
-4. afterBuild: 检测并执行 配置文件中的 afterBuild 脚本
+4. afterBuild: 检测并执行 配置文件 `glib.config.js` 中的 afterBuild 脚本
 5. updateVersion: 更新 package.json 中 version 字段
 6. changelog: 检测并执行 package.json 中的 changelog 脚本
 7. commit: 提交 commit
 8. push: 推送到远程 Github
 9. publishToNpm: 执行 `yarn publish --new-version ${version}`，默认跳过这个步骤
-10. afterDone: 检测并执行 配置文件中的 beforeDone 脚本
+10. afterDone: 检测并执行 配置文件 `glib.config.js` 中的 afterDone 脚本
